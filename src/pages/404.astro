@@ -1,0 +1,70 @@
+---
+import Footer from '@/components/Footer.astro';
+import Header from '@/components/Header.astro';
+import { CONTENT, LOCALE_META } from '@/i18n/content';
+import Base from '@/layouts/Base.astro';
+
+const c = CONTENT.vi;
+const en = CONTENT.en;
+---
+
+<Base
+  locale="vi"
+  title={`${c.notFound.title} – Phonics Arcade`}
+  description={c.notFound.text}
+  path="/404/"
+  ogAlt={c.meta.ogAlt}
+  alternates={false}
+  noindex
+>
+  <Header locale="vi" anchorsOnPage={false} />
+  <main id="main" class="wrap section not-found">
+    <p class="code" aria-hidden="true">
+      404
+    </p>
+    <h1>{c.notFound.title}</h1>
+    <p>{c.notFound.text}</p>
+    <p lang="en">{en.notFound.text}</p>
+    <div class="links">
+      <a class="btn btn-primary" href={LOCALE_META.vi.path}>
+        {c.notFound.home}
+      </a>
+      <a class="btn btn-ghost" href={LOCALE_META.en.path} hreflang="en" lang="en">
+        {en.notFound.home}
+      </a>
+    </div>
+  </main>
+  <Footer locale="vi" />
+</Base>
+
+<style>
+  .not-found {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    min-height: 60vh;
+    align-content: center;
+    text-align: center;
+    color: var(--c-muted);
+  }
+
+  .code {
+    font-weight: 800;
+    font-size: clamp(4rem, 12vw, 7rem);
+    line-height: 1;
+    color: var(--c-brand);
+  }
+
+  h1 {
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+    color: var(--c-brand-dark);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+</style>

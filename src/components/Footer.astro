@@ -1,0 +1,118 @@
+---
+import { BRAND, CONTENT, GAMES, LOCALE_META, LOCALES, type Locale } from '@/i18n/content';
+import { gameLink } from '@/lib/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const c = CONTENT[locale];
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="wrap grid">
+    <div>
+      <p class="name">{BRAND}</p>
+      <p class="tagline">{c.footer.tagline}</p>
+    </div>
+    <nav aria-label={c.nav.games}>
+      <p class="label">{c.nav.games}</p>
+      <ul>
+        {GAMES.map((game) => (
+          <li>
+            <a href={gameLink(game.id)}>{game.name}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <nav aria-label={c.footer.language}>
+      <p class="label">{c.footer.language}</p>
+      <ul>
+        {LOCALES.map((l) => (
+          <li>
+            <a
+              href={LOCALE_META[l].path}
+              hreflang={LOCALE_META[l].htmlLang}
+              lang={LOCALE_META[l].htmlLang}
+              aria-current={l === locale ? 'page' : undefined}
+            >
+              {LOCALE_META[l].label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+  <div class="wrap copy">
+    <small>
+      © {year} {BRAND}. {c.footer.rights}
+    </small>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding-block: 56px 32px;
+    color: #e9ddf7;
+    background: var(--c-brand-dark);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 32px;
+  }
+
+  .name {
+    font-weight: 800;
+    font-size: 1.375rem;
+    color: #fff;
+  }
+
+  .tagline {
+    margin-top: 8px;
+    max-width: 36ch;
+  }
+
+  .label {
+    margin-bottom: 8px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li a {
+    display: inline-block;
+    padding-block: 4px;
+    text-decoration: none;
+  }
+
+  li a:hover,
+  li a[aria-current='page'] {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .copy {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid rgb(255 255 255 / 0.15);
+  }
+
+  @media (max-width: 720px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .grid > :first-child {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

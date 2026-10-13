@@ -1,0 +1,69 @@
+---
+/**
+ * Toàn bộ thẻ SEO trong <head>: title, description, canonical, hreflang (+ x-default), Open Graph, Twitter,
+ * robots và JSON-LD. Mọi URL đều tuyệt đối, lấy từ `site` (SITE_URL).
+ */
+import { BRAND, LOCALE_META, LOCALES, type Locale } from '@/i18n/content';
+import { absolute, OG_IMAGE } from '@/lib/site';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  /** Đường dẫn của trang hiện tại (vd "/", "/en/"). */
+  path: string;
+  /** Có bản dịch ở ngôn ngữ khác không (404 thì không). */
+  alternates?: boolean;
+  noindex?: boolean;
+  ogAlt: string;
+  jsonLd?: object;
+}
+
+const { locale, title, description, path, alternates = true, noindex = false, ogAlt, jsonLd } = Astro.props;
+const site = Astro.site;
+const canonical = absolute(site, path);
+const ogImage = absolute(site, OG_IMAGE.path);
+const meta = LOCALE_META[locale];
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta
+  name="robots"
+  content={
+    noindex
+      ? 'noindex, follow'
+      : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+  }
+/>
+
+{alternates &&
+  LOCALES.map((l) => (
+    <link rel="alternate" hreflang={LOCALE_META[l].htmlLang} href={absolute(site, LOCALE_META[l].path)} />
+  ))}
+{alternates && <link rel="alternate" hreflang="x-default" href={absolute(site, LOCALE_META.vi.path)} />}
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={BRAND} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content={meta.ogLocale} />
+{alternates &&
+  LOCALES.filter((l) => l !== locale).map((l) => (
+    <meta property="og:locale:alternate" content={LOCALE_META[l].ogLocale} />
+  ))}
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content={String(OG_IMAGE.width)} />
+<meta property="og:image:height" content={String(OG_IMAGE.height)} />
+<meta property="og:image:alt" content={ogAlt} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+<meta name="twitter:image:alt" content={ogAlt} />
+
+{jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />}

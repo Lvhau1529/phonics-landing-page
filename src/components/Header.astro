@@ -1,0 +1,165 @@
+---
+import { Image } from 'astro:assets';
+import logo from '@/assets/logo.png';
+import { BRAND, CONTENT, LOCALE_META, LOCALES, type Locale } from '@/i18n/content';
+import { gameLink } from '@/lib/site';
+
+interface Props {
+  locale: Locale;
+  /** Trang chủ thì link menu là anchor "#games"; trang khác thì về trang chủ rồi tới anchor. */
+  anchorsOnPage?: boolean;
+}
+
+const { locale, anchorsOnPage = true } = Astro.props;
+const c = CONTENT[locale];
+const home = LOCALE_META[locale].path;
+const anchor = (id: string) => (anchorsOnPage ? `#${id}` : `${home}#${id}`);
+const other = LOCALES.find((l) => l !== locale)!;
+---
+
+<a class="skip-link" href="#main">
+  {c.nav.skip}
+</a>
+<header class="header">
+  <div class="wrap bar">
+    <a class="brand" href={home} aria-label={BRAND}>
+      <Image src={logo} alt="" width={44} height={44} densities={[1, 2]} loading="eager" />
+      <span>{BRAND}</span>
+    </a>
+    <nav class="nav" aria-label={c.nav.menu}>
+      <ul>
+        <li>
+          <a href={anchor('games')}>{c.nav.games}</a>
+        </li>
+        <li>
+          <a href={anchor('skills')}>{c.nav.skills}</a>
+        </li>
+        <li>
+          <a href={anchor('classroom')}>{c.nav.classroom}</a>
+        </li>
+        <li>
+          <a href={anchor('faq')}>{c.nav.faq}</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="actions">
+      <a
+        class="lang"
+        href={LOCALE_META[other].path}
+        hreflang={LOCALE_META[other].htmlLang}
+        lang={LOCALE_META[other].htmlLang}
+        title={LOCALE_META[other].label}
+      >
+        {other.toUpperCase()}
+      </a>
+      <a class="btn btn-primary play" href={gameLink()}>
+        {c.nav.play}
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(255 250 242 / 0.88);
+    backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 72px;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--c-brand-dark);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .brand img {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  .nav {
+    margin-left: auto;
+  }
+
+  .nav ul {
+    display: flex;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav a {
+    display: block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    color: var(--c-muted);
+    text-decoration: none;
+  }
+
+  .nav a:hover {
+    color: var(--c-brand-dark);
+    background: var(--c-brand-soft);
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .lang {
+    display: inline-grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.875rem;
+    color: var(--c-brand-dark);
+    text-decoration: none;
+    box-shadow: inset 0 0 0 2px var(--c-line);
+  }
+
+  .lang:hover {
+    box-shadow: inset 0 0 0 2px var(--c-brand);
+  }
+
+  .play {
+    min-height: 44px;
+    padding: 8px 20px;
+    font-size: 1rem;
+  }
+
+  @media (max-width: 900px) {
+    .nav {
+      display: none;
+    }
+    .actions {
+      margin-left: auto;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .brand span {
+      display: none;
+    }
+  }
+</style>

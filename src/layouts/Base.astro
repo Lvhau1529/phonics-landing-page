@@ -1,0 +1,42 @@
+---
+import { Font } from 'astro:assets';
+import Seo from '@/components/Seo.astro';
+import { LOCALE_META, THEME_COLOR, type Locale } from '@/i18n/content';
+import '@/styles/global.css';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  path: string;
+  ogAlt: string;
+  alternates?: boolean;
+  noindex?: boolean;
+  jsonLd?: object;
+}
+
+const { locale, ...seo } = Astro.props;
+// Chỉ preload weight 800 của heading (H1 là LCP): file latin + vietnamese (~5 KB, cả trang EN cũng dùng cho
+// nhãn "Tiếng Việt"). Các weight khác tải theo font-display: swap.
+const fontPreload = [{ weight: 800 }];
+---
+
+<!doctype html>
+<html lang={LOCALE_META[locale].htmlLang} dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Font cssVariable="--font-baloo" preload={fontPreload} />
+    <Seo locale={locale} {...seo} />
+    <meta name="theme-color" content={THEME_COLOR} />
+    <meta name="color-scheme" content="light" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" href="/icons/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/icons/favicon-64x64.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

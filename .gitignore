@@ -1,0 +1,10 @@
+node_modules
+dist
+.astro
+*.local
+.DS_Store
+.vercel
+# Secret: chỉ commit *.env.example
+.env
+.env.*
+!.env.example
